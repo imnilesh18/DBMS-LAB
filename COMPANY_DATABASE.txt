@@ -1,0 +1,523 @@
+mysql> create database COMPANY_DATABASE;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE COMPANY_DATABASE;
+Database changed
+mysql> CREATE TABLE DEPARTMENT(
+    -> Dno int primary key,
+    -> DName varchar(50),
+    -> MgrSSN int,
+    -> MgrStartDate date
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DESC DEPARTMENT;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Dno          | int         | NO   | PRI | NULL    |       |
+| DName        | varchar(50) | YES  |     | NULL    |       |
+| MgrSSN       | int         | YES  |     | NULL    |       |
+| MgrStartDate | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE TABLE EMPLOYEE(
+    -> SSN int primary key,
+    -> Name varchar(50),
+    -> Address varchar(50),
+    -> Sex char(1),
+    -> Salary int,
+    -> SuperSSN int,
+    -> Dno int,
+    -> foreign key (SuperSSN) references EMPLOYEE(SSN) on delete cascade,
+    -> foreign key (Dno) references DEPARTMENT(Dno) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> Desc EMPLOYEE;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| SSN      | int         | NO   | PRI | NULL    |       |
+| Name     | varchar(50) | YES  |     | NULL    |       |
+| Address  | varchar(50) | YES  |     | NULL    |       |
+| Sex      | char(1)     | YES  |     | NULL    |       |
+| Salary   | int         | YES  |     | NULL    |       |
+| SuperSSN | int         | YES  | MUL | NULL    |       |
+| Dno      | int         | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> ALTER TABLE DEPARTMENT
+    -> ADD CONSTRAINT fk_mgr foreign key(MgrSSN) references EMPLOYEE(SSN) on delete cascade;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC DEPARTMENT;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Dno          | int         | NO   | PRI | NULL    |       |
+| DName        | varchar(50) | YES  |     | NULL    |       |
+| MgrSSN       | int         | YES  | MUL | NULL    |       |
+| MgrStartDate | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE TABLE DLOCATION(
+    -> Dno int,
+    -> DLoc varchar(50),
+    -> primary key (Dno, DLoc),
+    -> foreign key (Dno) references DEPARTMENT(Dno) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> Desc DLOCATION;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| Dno   | int         | NO   | PRI | NULL    |       |
+| DLoc  | varchar(50) | NO   | PRI | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> CREATE TABLE PROJECT(
+    -> PNo int primary key,
+    -> PName varchar(50),
+    -> PLocation varchar(50),
+    -> Dno int,
+    -> foreign key (Dno) references DEPARTMENT(Dno) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DESC PROJECT;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| PNo       | int         | NO   | PRI | NULL    |       |
+| PName     | varchar(50) | YES  |     | NULL    |       |
+| PLocation | varchar(50) | YES  |     | NULL    |       |
+| Dno       | int         | YES  | MUL | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE TABLE WORKS_ON(
+    -> SSN int,
+    -> PNo int,
+    -> Hours int,
+    -> primary key(SSN, PNo),
+    -> foreign key(SSN) references EMPLOYEE(SSN) on delete cascade,
+    -> foreign key(PNo) references Project(PNo) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DESC WORKS_ON;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| SSN   | int  | NO   | PRI | NULL    |       |
+| PNo   | int  | NO   | PRI | NULL    |       |
+| Hours | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1001, "Jacob Scott", "Jayanagar", "M", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1002, "Tim", "Jayanagar", "M", 7007011);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1003, "Jil", "Jayanagar", "M", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1004, "Josh", "Jayanagar", "M", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1005, "Jim", "Jayanagar", "M", 6370010);;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1006, "Kate", "Jayanagar", "F", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1008, "Jay", "Jayanagar", "M", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1009, "Claire", "Jayanagar", "F", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1010, "Jack", "Jayanagar", "M", 6370010);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1011, "Jack", "Jayanagar", "M", 6378236);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO EMPLOYEE (SSN,Name, Address, Sex, Salary) values (1012, "Timmy", "Jayanagar", "M", 637000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM EMPLOYEE;
++------+-------------+-----------+------+---------+----------+------+
+| SSN  | Name        | Address   | Sex  | Salary  | SuperSSN | Dno  |
++------+-------------+-----------+------+---------+----------+------+
+| 1001 | Jacob Scott | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1002 | Tim         | Jayanagar | M    | 7007011 |     NULL | NULL |
+| 1003 | Jil         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1004 | Josh        | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1005 | Jim         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1006 | Kate        | Jayanagar | F    | 6370010 |     NULL | NULL |
+| 1007 | Joseph      | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1008 | Jay         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1009 | Claire      | Jayanagar | F    | 6370010 |     NULL | NULL |
+| 1010 | Jack        | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1011 | Jack        | Jayanagar | M    | 6378236 |     NULL | NULL |
+| 1012 | Timmy       | Jayanagar | M    |  637000 |     NULL | NULL |
++------+-------------+-----------+------+---------+----------+------+
+12 rows in set (0.00 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(1, "Accounts", 1001, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(2, "Finance", 1003, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(3, "HR", 1003, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(4, "Admin", 1003, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(5, "Payroll", 1002, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(6, "Housekeeping", 1002, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(7, "Training", 1002, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DEPARTMENT VALUES(8, "PF", 1002, "2017-02-12");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM DEPARTMENT;
++-----+--------------+--------+--------------+
+| Dno | DName        | MgrSSN | MgrStartDate |
++-----+--------------+--------+--------------+
+|   1 | Accounts     |   1001 | 2017-02-12   |
+|   2 | Finance      |   1003 | 2017-02-12   |
+|   3 | HR           |   1003 | 2017-02-12   |
+|   4 | Admin        |   1003 | 2017-02-12   |
+|   5 | Payroll      |   1002 | 2017-02-12   |
+|   6 | Housekeeping |   1002 | 2017-02-12   |
+|   7 | Training     |   1002 | 2017-02-12   |
+|   8 | PF           |   1002 | 2017-02-12   |
++-----+--------------+--------+--------------+
+8 rows in set (0.00 sec)
+
+mysql> UPDATE EMPLOYEE SET Dno = 1 WHERE SSN = 1001;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM EMPLOYEE;
++------+-------------+-----------+------+---------+----------+------+
+| SSN  | Name        | Address   | Sex  | Salary  | SuperSSN | Dno  |
++------+-------------+-----------+------+---------+----------+------+
+| 1001 | Jacob Scott | Jayanagar | M    | 6370010 |     NULL |    1 |
+| 1002 | Tim         | Jayanagar | M    | 7007011 |     NULL | NULL |
+| 1003 | Jil         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1004 | Josh        | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1005 | Jim         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1006 | Kate        | Jayanagar | F    | 6370010 |     NULL | NULL |
+| 1007 | Joseph      | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1008 | Jay         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1009 | Claire      | Jayanagar | F    | 6370010 |     NULL | NULL |
+| 1010 | Jack        | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1011 | Jack        | Jayanagar | M    | 6378236 |     NULL | NULL |
+| 1012 | Timmy       | Jayanagar | M    |  637000 |     NULL | NULL |
++------+-------------+-----------+------+---------+----------+------+
+12 rows in set (0.00 sec)
+
+mysql> UPDATE EMPLOYEE SET Dno = 7, SuperSSN = 1001 WHERE SSN = 1002;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM EMPLOYEE;
++------+-------------+-----------+------+---------+----------+------+
+| SSN  | Name        | Address   | Sex  | Salary  | SuperSSN | Dno  |
++------+-------------+-----------+------+---------+----------+------+
+| 1001 | Jacob Scott | Jayanagar | M    | 6370010 |     NULL |    1 |
+| 1002 | Tim         | Jayanagar | M    | 7007011 |     1001 |    7 |
+| 1003 | Jil         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1004 | Josh        | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1005 | Jim         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1006 | Kate        | Jayanagar | F    | 6370010 |     NULL | NULL |
+| 1007 | Joseph      | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1008 | Jay         | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1009 | Claire      | Jayanagar | F    | 6370010 |     NULL | NULL |
+| 1010 | Jack        | Jayanagar | M    | 6370010 |     NULL | NULL |
+| 1011 | Jack        | Jayanagar | M    | 6378236 |     NULL | NULL |
+| 1012 | Timmy       | Jayanagar | M    |  637000 |     NULL | NULL |
++------+-------------+-----------+------+---------+----------+------+
+12 rows in set (0.00 sec)
+
+mysql> UPDATE EMPLOYEE SET Dno = 5, SuperSSN = 1001 WHERE SSN = 1003;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 5, SuperSSN = 1002 WHERE SSN = 1004;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 5, SuperSSN = 1001 WHERE SSN = 1005;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 2, SuperSSN = 1001 WHERE SSN = 1006;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 5, SuperSSN = 1001 WHERE SSN = 1007;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 5, SuperSSN = 1003 WHERE SSN = 1008;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 5, SuperSSN = 1006 WHERE SSN = 1009;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 1, SuperSSN = 1005 WHERE SSN = 1010;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 1, SuperSSN = 1002 WHERE SSN = 1011;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE EMPLOYEE SET Dno = 1, SuperSSN = 1001 WHERE SSN = 1012;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM EMPLOYEE;
++------+-------------+-----------+------+---------+----------+------+
+| SSN  | Name        | Address   | Sex  | Salary  | SuperSSN | Dno  |
++------+-------------+-----------+------+---------+----------+------+
+| 1001 | Jacob Scott | Jayanagar | M    | 6370010 |     NULL |    1 |
+| 1002 | Tim         | Jayanagar | M    | 7007011 |     1001 |    7 |
+| 1003 | Jil         | Jayanagar | M    | 6370010 |     1001 |    5 |
+| 1004 | Josh        | Jayanagar | M    | 6370010 |     1002 |    5 |
+| 1005 | Jim         | Jayanagar | M    | 6370010 |     1001 |    5 |
+| 1006 | Kate        | Jayanagar | F    | 6370010 |     1001 |    2 |
+| 1007 | Joseph      | Jayanagar | M    | 6370010 |     1001 |    5 |
+| 1008 | Jay         | Jayanagar | M    | 6370010 |     1003 |    5 |
+| 1009 | Claire      | Jayanagar | F    | 6370010 |     1006 |    5 |
+| 1010 | Jack        | Jayanagar | M    | 6370010 |     1005 |    1 |
+| 1011 | Jack        | Jayanagar | M    | 6378236 |     1002 |    1 |
+| 1012 | Timmy       | Jayanagar | M    |  637000 |     1001 |    1 |
++------+-------------+-----------+------+---------+----------+------+
+12 rows in set (0.00 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(1, "Bangalore");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(1, "Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(1, "Pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(2, "Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(3, "Chennai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(4, "Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(5, "Guwahati");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(6, "Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(7, "Delhi");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(8, "Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO DLOCATION VALUES(8, "Pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM DLOCATION;
++-----+-----------+
+| Dno | DLoc      |
++-----+-----------+
+|   1 | Bangalore |
+|   1 | Mumbai    |
+|   1 | Pune      |
+|   2 | Mumbai    |
+|   3 | Chennai   |
+|   4 | Mumbai    |
+|   5 | Guwahati  |
+|   6 | Mumbai    |
+|   7 | Delhi     |
+|   8 | Mumbai    |
+|   8 | Pune      |
++-----+-----------+
+11 rows in set (0.00 sec)
+
+mysql> INSERT INTO PROJECT VALUES(10, "IoT", "Mumbai", 1);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(11, "Adhoc", "Pune", 1);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(12, "mobile", "Bangalore", 2);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(13, "finacle","Chennai",3);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(14, "android", "Pune", 4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(15, "Java", "Mumbai", 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(16, "dot net", "Pune", 5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(17, "c#", "Mumbai", 6);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO PROJECT VALUES(18, "c++", "Delhi", 7);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PROJECT VALUES(19, "python", "Delhi", 8);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM PROJECT;
++-----+---------+-----------+------+
+| PNo | PName   | PLocation | Dno  |
++-----+---------+-----------+------+
+|  10 | IoT     | Mumbai    |    1 |
+|  11 | Adhoc   | Pune      |    1 |
+|  12 | mobile  | Bangalore |    2 |
+|  13 | finacle | Chennai   |    3 |
+|  14 | android | Pune      |    4 |
+|  15 | Java    | Mumbai    |    5 |
+|  16 | dot net | Pune      |    5 |
+|  17 | c#      | Mumbai    |    6 |
+|  18 | c++     | Delhi     |    7 |
+|  19 | python  | Delhi     |    8 |
++-----+---------+-----------+------+
+10 rows in set (0.00 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1001, 11, 40);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1001, 15, 45);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1001, 16, 40);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1002, 10, 45);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1002, 11, 45);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1003, 11, 45);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1004, 19, 45);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO WORKS_ON VALUES(1005, 18, 45);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM WORKS_ON;
++------+-----+-------+
+| SSN  | PNo | Hours |
++------+-----+-------+
+| 1001 |  11 |    40 |
+| 1001 |  15 |    45 |
+| 1001 |  16 |    40 |
+| 1002 |  10 |    45 |
+| 1002 |  11 |    45 |
+| 1003 |  11 |    45 |
+| 1004 |  19 |    45 |
+| 1005 |  18 |    45 |
++------+-----+-------+
+8 rows in set (0.00 sec)
+
+mysql> (SELECT PNo
+    -> FROM PROJECT P, DEPARTMENT D, EMPLOYEE E
+    -> WHERE P.Dno = D.Dno AND D.MgrSSN = E.SSN AND E.Name = "Scott")
+    -> UNION
+    -> (SELECT PNo
+    -> FROM EMPLOYEE E, WORKS_ON W
+    -> WHERE E.SSN = W.SSN AND E.Name LIKE "%Scott");
++-----+
+| PNo |
++-----+
+|  11 |
+|  15 |
+|  16 |
++-----+
+3 rows in set (0.01 sec)
+
+mysql> SELECT E.SSN, Salary*1.1
+    -> FROM EMPLOYEE E, WORKS_ON W, PROJECT P
+    -> WHERE W.PNo = P.PNo AND E.SSN = W.SSN AND PName = "IoT";
++------+------------+
+| SSN  | Salary*1.1 |
++------+------------+
+| 1002 |  7707712.1 |
++------+------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT DName, MAX(Salary), MIN(Salary), AVG(Salary), SUM(Salary)
+    -> FROM EMPLOYEE E, DEPARTMENT D
+    -> WHERE E.Dno = D.Dno
+    -> GROUP BY D.DName
+    -> HAVING D.DName = "Accounts";
++----------+-------------+-------------+--------------+-------------+
+| DName    | MAX(Salary) | MIN(Salary) | AVG(Salary)  | SUM(Salary) |
++----------+-------------+-------------+--------------+-------------+
+| Accounts |     6378236 |      637000 | 4938814.0000 |    19755256 |
++----------+-------------+-------------+--------------+-------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT E.Name
+    -> FROM EMPLOYEE E
+    -> WHERE NOT EXISTS(SELECT PNo
+    -> FROM PROJECT
+    -> WHERE Dno = 5 AND PNo NOT IN (SELECT PNo
+    -> FROM WORKS_ON W
+    -> WHERE W.SSN = E.SSN));
++-------------+
+| Name        |
++-------------+
+| Jacob Scott |
++-------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT Dno, COUNT(SSN)
+    -> FROM EMPLOYEE
+    -> WHERE Salary > 600000 AND Dno IN(SELECT Dno
+    -> FROM EMPLOYEE
+    -> GROUP BY Dno
+    -> HAVING COUNT(SSN) > 5)
+    -> GROUP BY Dno;
++------+------------+
+| Dno  | COUNT(SSN) |
++------+------------+
+|    5 |          6 |
++------+------------+
+1 row in set (0.00 sec)
