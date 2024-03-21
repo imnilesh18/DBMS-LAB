@@ -1,0 +1,432 @@
+mysql> CREATE DATABASE LIBRARY_DATABASE;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE LIBRARY_DATABASE;
+Database changed
+
+mysql> CREATE TABLE PUBLISHER(
+    -> Name VARCHAR(50) PRIMARY KEY,
+    -> Address VARCHAR(50),
+    -> Phone int(10)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.02 sec)
+
+mysql> DESC PUBLISHER;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| Name    | varchar(50) | NO   | PRI | NULL    |       |
+| Address | varchar(50) | YES  |     | NULL    |       |
+| Phone   | int         | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE BOOK(
+    -> Book_id int PRIMARY KEY,
+    -> Title VARCHAR(50),
+    -> Publisher_Name VARCHAR(50),
+    -> Pub_Year int(4),
+    -> foreign key (Publisher_Name) references PUBLISHER(Name) on delete cascade
+    -> );
+Query OK, 0 rows affected, 1 warning (0.04 sec)
+
+mysql> desc BOOK;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| Book_id        | int         | NO   | PRI | NULL    |       |
+| Title          | varchar(50) | YES  |     | NULL    |       |
+| Publisher_Name | varchar(50) | YES  | MUL | NULL    |       |
+| Pub_Year       | int         | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE TABLE BOOK_AUTHORS(
+    -> Book_id int primary key,
+    -> Author_Name varchar(50),
+    -> foreign key (Book_id) references BOOK(Book_id) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc BOOK_AUTHORS;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Book_id     | int         | NO   | PRI | NULL    |       |
+| Author_Name | varchar(50) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> CREATE TABLE LIBRARY_PROGRAMME(
+    -> Programme_id int PRIMARY KEY,
+    -> Programme_Name varchar(50),
+    -> Address varchar(50)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc LIBRARY_PROGRAMME;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| Programme_id   | int         | NO   | PRI | NULL    |       |
+| Programme_Name | varchar(50) | YES  |     | NULL    |       |
+| Address        | varchar(50) | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE BOOK_COPIES(
+    -> Book_id int,
+    -> Programme_id int,
+    -> No_of_Copies int,
+    -> PRIMARY KEY (Book_id, Programme_id),
+    -> foreign key(Book_id) references BOOK(Book_id) on delete cascade,
+    -> foreign key(Programme_id) references LIBRARY_PROGRAMME(Programme_id) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc BOOK_COPIES;
++--------------+------+------+-----+---------+-------+
+| Field        | Type | Null | Key | Default | Extra |
++--------------+------+------+-----+---------+-------+
+| Book_id      | int  | NO   | PRI | NULL    |       |
+| Programme_id | int  | NO   | PRI | NULL    |       |
+| No_of_Copies | int  | YES  |     | NULL    |       |
++--------------+------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE BOOK_LENDING(
+    -> Book_id int,
+    -> Programme_id int,
+    -> Card_No varchar(50),
+    -> Date_Out date,
+    -> Due_Date date,
+    -> Primary key(Book_id, Programme_id, Card_No),
+    -> foreign key (Book_id) references BOOK(Book_id) on delete cascade,
+    -> foreign key (Programme_id) references LIBRARY_PROGRAMME(Programme_id) on delete cascade
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> desc BOOK_LENDING;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| Book_id      | int         | NO   | PRI | NULL    |       |
+| Programme_id | int         | NO   | PRI | NULL    |       |
+| Card_No      | varchar(50) | NO   | PRI | NULL    |       |
+| Date_Out     | date        | YES  |     | NULL    |       |
+| Due_Date     | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO PUBLISHER VALUES("cambridge", "delhi", 999999999);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from PUBLISHER;
++-----------+---------+-----------+
+| Name      | Address | Phone     |
++-----------+---------+-----------+
+| cambridge | delhi   | 999999999 |
++-----------+---------+-----------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO PUBLISHER VALUES("dreamworks", "chennai", 999999999);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PUBLISHER VALUES("fox", "pune", 999999999);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PUBLISHER VALUES("pearson", "bangalore", 999999999);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO PUBLISHER VALUES("tata", "mumbai", 999999999);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from PUBLISHER;
++------------+-----------+-----------+
+| Name       | Address   | Phone     |
++------------+-----------+-----------+
+| cambridge  | delhi     | 999999999 |
+| dreamworks | chennai   | 999999999 |
+| fox        | pune      | 999999999 |
+| pearson    | bangalore | 999999999 |
+| tata       | mumbai    | 999999999 |
++------------+-----------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO BOOK VALUES(1001, "software engineering", "pearson", 1998);
+Query OK, 1 row affected (0.01 sec)
+mysql> INSERT INTO BOOK VALUES(1002, "digital image processing", "tata", 1998);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK VALUES(1003, "computer architecture", "dreamworks", 1998);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK VALUES(1004, "data structures", "fox", 1998);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO BOOK VALUES(1005, "dbms", "cambridge", 1998);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM BOOK;
++---------+--------------------------+----------------+----------+
+| Book_id | Title                    | Publisher_Name | Pub_Year |
++---------+--------------------------+----------------+----------+
+|    1001 | software engineering     | pearson        |     1998 |
+|    1002 | digital image processing | tata           |     1998 |
+|    1003 | computer architecture    | dreamworks     |     1998 |
+|    1004 | data structures          | fox            |     1998 |
+|    1005 | dbms                     | cambridge      |     1998 |
++---------+--------------------------+----------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO BOOK_AUTHORS VALUES(1001, "Samuel Simons");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_AUTHORS VALUES(1002, "Morris Mano");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO BOOK_AUTHORS VALUES(1003, "G Navathe");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_AUTHORS VALUES(1004, "Christopher Nolan");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO BOOK_AUTHORS VALUES(1005, "Chris Hemsworth");
+Query OK, 1 row affected (0.01 sec)
+mysql> SELECT * FROM BOOK_AUTHORS;
++---------+-------------------+
+| Book_id | Author_Name       |
++---------+-------------------+
+|    1001 | Samuel Simons     |
+|    1002 | Morris Mano       |
+|    1003 | G Navathe         |
+|    1004 | Christopher Nolan |
+|    1005 | Chris Hemsworth   |
++---------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO LIBRARY_PROGRAMME VALUES(1, "CMRIT", "Bangalore");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO LIBRARY_PROGRAMME VALUES(2, "RV", "Bangalore");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO LIBRARY_PROGRAMME VALUES(3, "PES", "Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO LIBRARY_PROGRAMME VALUES(4, "CU", "Chandigarh");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO LIBRARY_PROGRAMME VALUES(5, "CGC", "Pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM LIBRARY_PROGRAMME;
++--------------+----------------+------------+
+| Programme_id | Programme_Name | Address    |
++--------------+----------------+------------+
+|            1 | CMRIT          | Bangalore  |
+|            2 | RV             | Bangalore  |
+|            3 | PES            | Mumbai     |
+|            4 | CU             | Chandigarh |
+|            5 | CGC            | Pune       |
++--------------+----------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO BOOK_COPIES VALUES(1001, 1, 50);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_COPIES VALUES(1001, 2, 10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_COPIES VALUES(1002, 2, 80);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_COPIES VALUES(1003, 5, 90);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_COPIES VALUES(1005, 3, 60);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM BOOK_COPIES;
++---------+--------------+--------------+
+| Book_id | Programme_id | No_of_Copies |
++---------+--------------+--------------+
+|    1001 |            1 |           50 |
+|    1001 |            2 |           10 |
+|    1002 |            2 |           80 |
+|    1003 |            5 |           90 |
+|    1005 |            3 |           60 |
++---------+--------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1001, 1, "A501", "2017-01-01", "2017-06-30");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1002, 1, "A501", "2017-04-15", "2017-05-26");
+Query OK, 1 row affected (0.02 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1002, 2, "A544", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1002, 5, "A701", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1003, 1, "A501", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1003, 1, "A599", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1003, 5, "A701", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1005, 1, "A501", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1005, 4, "A601", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1004, 5, "A701", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> INSERT INTO BOOK_LENDING VALUES(1005, 5, "A701", "2017-01-15", "2017-05-26");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from BOOK_LENDING;
++---------+--------------+---------+------------+------------+
+| Book_id | Programme_id | Card_No | Date_Out   | Due_Date   |
++---------+--------------+---------+------------+------------+
+|    1001 |            1 | A501    | 2017-01-01 | 2017-06-30 |
+|    1002 |            1 | A501    | 2017-04-15 | 2017-05-26 |
+|    1002 |            2 | A544    | 2017-01-15 | 2017-05-26 |
+|    1002 |            5 | A701    | 2017-01-15 | 2017-05-26 |
+|    1003 |            1 | A501    | 2017-01-15 | 2017-05-26 |
+|    1003 |            1 | A599    | 2017-01-15 | 2017-05-26 |
+|    1003 |            5 | A701    | 2017-01-15 | 2017-05-26 |
+|    1004 |            5 | A701    | 2017-01-15 | 2017-05-26 |
+|    1005 |            1 | A501    | 2017-01-15 | 2017-05-26 |
+|    1005 |            4 | A601    | 2017-01-15 | 2017-05-26 |
+|    1005 |            5 | A701    | 2017-01-15 | 2017-05-26 |
++---------+--------------+---------+------------+------------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT B.Book_id, B.Title, B.Publisher_Name, A.Author_Name, C.No_of_Copies
+    -> FROM BOOK B, BOOK_AUTHORS A, BOOK_COPIES C
+    -> WHERE B.Book_id = A.Book_id AND B.Book_id = C.Book_id;
++---------+--------------------------+----------------+-----------------+--------------+
+| Book_id | Title                    | Publisher_Name | Author_Name     | No_of_Copies |
++---------+--------------------------+----------------+-----------------+--------------+
+|    1001 | software engineering     | pearson        | Samuel Simons   |           50 |
+|    1001 | software engineering     | pearson        | Samuel Simons   |           10 |
+|    1002 | digital image processing | tata           | Morris Mano     |           80 |
+|    1003 | computer architecture    | dreamworks     | G Navathe       |           90 |
+|    1005 | dbms                     | cambridge      | Chris Hemsworth |           60 |
++---------+--------------------------+----------------+-----------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Card_No
+    -> FROM BOOK_LENDING
+    -> WHERE Date_Out >= "2017-01-01" AND Date_Out <= "2017-06-30"
+    -> GROUP BY Card_No
+    -> HAVING COUNT(*) > 3;
++---------+
+| Card_No |
++---------+
+| A501    |
+| A701    |
++---------+
+2 rows in set (0.01 sec)
+
+mysql> DELETE FROM BOOK
+    -> WHERE Book_id = 1005;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT  * FROM BOOK;
++---------+--------------------------+----------------+----------+
+| Book_id | Title                    | Publisher_Name | Pub_Year |
++---------+--------------------------+----------------+----------+
+|    1001 | software engineering     | pearson        |     1998 |
+|    1002 | digital image processing | tata           |     1998 |
+|    1003 | computer architecture    | dreamworks     |     1998 |
+|    1004 | data structures          | fox            |     1998 |
++---------+--------------------------+----------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM BOOK_LENDING;
++---------+--------------+---------+------------+------------+
+| Book_id | Programme_id | Card_No | Date_Out   | Due_Date   |
++---------+--------------+---------+------------+------------+
+|    1001 |            1 | A501    | 2017-01-01 | 2017-06-30 |
+|    1002 |            1 | A501    | 2017-04-15 | 2017-05-26 |
+|    1002 |            2 | A544    | 2017-01-15 | 2017-05-26 |
+|    1002 |            5 | A701    | 2017-01-15 | 2017-05-26 |
+|    1003 |            1 | A501    | 2017-01-15 | 2017-05-26 |
+|    1003 |            1 | A599    | 2017-01-15 | 2017-05-26 |
+|    1003 |            5 | A701    | 2017-01-15 | 2017-05-26 |
+|    1004 |            5 | A701    | 2017-01-15 | 2017-05-26 |
++---------+--------------+---------+------------+------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT * FROM BOOK_COPIES;
++---------+--------------+--------------+
+| Book_id | Programme_id | No_of_Copies |
++---------+--------------+--------------+
+|    1001 |            1 |           50 |
+|    1001 |            2 |           10 |
+|    1002 |            2 |           80 |
+|    1003 |            5 |           90 |
++---------+--------------+--------------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE VIEW V_PUB AS
+    -> SELECT Pub_Year
+    -> FROM BOOK;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM V_PUB;
++----------+
+| Pub_Year |
++----------+
+|     1998 |
+|     1998 |
+|     1998 |
+|     1998 |
++----------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE VIEW V_BOOKS AS
+    -> SELECT B.Book_id, B.Title, C.No_of_Copies
+    -> FROM BOOK B, BOOK_COPIES C, LIBRARY_PROGRAMME L
+    -> WHERE B.Book_id = C.Book_id AND L.Programme_id = C.Programme_id;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM V_BOOKS;
++---------+--------------------------+--------------+
+| Book_id | Title                    | No_of_Copies |
++---------+--------------------------+--------------+
+|    1001 | software engineering     |           50 |
+|    1001 | software engineering     |           10 |
+|    1002 | digital image processing |           80 |
+|    1003 | computer architecture    |           90 |
++---------+--------------------------+--------------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE VIEW V_BOOKSS AS
+    -> SELECT B.Book_id, B.Title, C.No_of_Copies
+    -> FROM BOOK B, BOOK_COPIES C
+    -> WHERE B.Book_id = C.Book_id;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM V_BOOKSS;
++---------+--------------------------+--------------+
+| Book_id | Title                    | No_of_Copies |
++---------+--------------------------+--------------+
+|    1001 | software engineering     |           50 |
+|    1001 | software engineering     |           10 |
+|    1002 | digital image processing |           80 |
+|    1003 | computer architecture    |           90 |
++---------+--------------------------+--------------+
+4 rows in set (0.00 sec)
+
+
+
